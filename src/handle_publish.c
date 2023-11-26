@@ -166,6 +166,11 @@ int handle__publish(struct mosquitto *context)
 					p_prev = p;
 					p = p->next;
 					break;
+				
+				case MQTT_PROP_TIMESTAMP:
+					p_prev = p;
+					p = p->next;
+					break;
 
 				default:
 					p = p->next;

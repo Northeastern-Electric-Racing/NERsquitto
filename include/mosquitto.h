@@ -2809,6 +2809,30 @@ libmosq_EXPORT int mosquitto_property_add_int16(mosquitto_property **proplist, i
 libmosq_EXPORT int mosquitto_property_add_int32(mosquitto_property **proplist, int identifier, uint32_t value);
 
 /*
+ * Function: mosquitto_property_add_int64
+ *
+ * Add a new int64 property to a property list.
+ *
+ * If *proplist == NULL, a new list will be created, otherwise the new property
+ * will be appended to the list.
+ *
+ * Parameters:
+ *	proplist - pointer to mosquitto_property pointer, the list of properties
+ *	identifier - property identifier (e.g. MQTT_PROP_TIMESTAMP)
+ *	value - integer value for the new property
+ *
+ * Returns:
+ *	MOSQ_ERR_SUCCESS - on success
+ *	MOSQ_ERR_INVAL - if identifier is invalid, or if proplist is NULL
+ *	MOSQ_ERR_NOMEM - on out of memory
+ *
+ * Example:
+ * > mosquitto_property *proplist = NULL;
+ * > mosquitto_property_add_int64(&proplist, MQTT_PROP_TIMESTAMP, 86400);
+ */
+libmosq_EXPORT int mosquitto_property_add_int64(mosquitto_property **proplist, int identifier, uint64_t value);
+
+/*
  * Function: mosquitto_property_add_varint
  *
  * Add a new varint property to a property list.
@@ -3041,6 +3065,31 @@ libmosq_EXPORT const mosquitto_property *mosquitto_property_read_int32(
 		const mosquitto_property *proplist,
 		int identifier,
 		uint32_t *value,
+		bool skip_first);
+
+/*
+ * Function: mosquitto_property_read_int64
+ *
+ * Read an int64 property value from a property.
+ *
+ * Parameters:
+ *	property - pointer to mosquitto_property pointer, the list of properties
+ *	identifier - property identifier (e.g. MQTT_PROP_PAYLOAD_FORMAT_INDICATOR)
+ *	value - pointer to store the value, or NULL if the value is not required.
+ *	skip_first - boolean that indicates whether the first item in the list
+ *	             should be ignored or not. Should usually be set to false.
+ *
+ * Returns:
+ *	A valid property pointer if the property is found
+ *	NULL, if the property is not found, or proplist is NULL.
+ *
+ * Example:
+ *	See <mosquitto_property_read_byte>
+ */
+libmosq_EXPORT const mosquitto_property *mosquitto_property_read_int64(
+		const mosquitto_property *proplist,
+		int identifier,
+		uint64_t *value,
 		bool skip_first);
 
 /*

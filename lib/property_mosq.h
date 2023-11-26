@@ -32,6 +32,7 @@ struct mqtt5__property {
 		uint8_t i8;
 		uint16_t i16;
 		uint32_t i32;
+		uint64_t i64;
 		uint32_t varint;
 		struct mqtt__string bin;
 		struct mqtt__string s;

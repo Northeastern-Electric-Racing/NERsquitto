@@ -104,6 +104,7 @@ MOSQ_1.6 {
 		mosquitto_property_add_byte;
 		mosquitto_property_add_int16;
 		mosquitto_property_add_int32;
+		mosquitto_property_add_int64;
 		mosquitto_property_add_string;
 		mosquitto_property_add_string_pair;
 		mosquitto_property_add_varint;

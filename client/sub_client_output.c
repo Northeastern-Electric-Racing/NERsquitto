@@ -161,6 +161,7 @@ static int json_print_properties(cJSON *root, const mosquitto_property *properti
 	uint8_t i8value = 0;
 	uint16_t i16value = 0;
 	uint32_t i32value = 0;
+	uint64_t i64value = 0;
 	char *strname = NULL, *strvalue = NULL;
 	char *binvalue = NULL;
 	cJSON *tmp, *prop_json, *user_json = NULL;
@@ -237,6 +238,11 @@ static int json_print_properties(cJSON *root, const mosquitto_property *properti
 				strname = NULL;
 				strvalue = NULL;
 				tmp = NULL; /* Don't add this to prop_json below */
+				break;
+
+			case MQTT_PROP_TIMESTAMP:
+				mosquitto_property_read_int64(prop, MQTT_PROP_TIMESTAMP, &i64value, false);
+				tmp = cJSON_CreateNumber(i64value);
 				break;
 		}
 		if(tmp != NULL){

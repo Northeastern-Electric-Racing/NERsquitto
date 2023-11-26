@@ -187,6 +187,14 @@ int cfg_parse_property(struct mosq_config *cfg, int argc, char *argv[], int *idx
 			}
 			rc = mosquitto_property_add_int32(proplist, identifier, (uint32_t )tmpl);
 			break;
+		case MQTT_PROP_TYPE_INT64:
+			tmpl = atol(value);
+			if(tmpl < 0 || tmpl > UINT64_MAX){
+				fprintf(stderr, "Error: Property value (%ld) out of range for property %s.\n\n", tmpl, propname);
+				return MOSQ_ERR_INVAL;
+			}
+			rc = mosquitto_property_add_int64(proplist, identifier, (uint64_t )tmpl);
+			break;
 		case MQTT_PROP_TYPE_VARINT:
 			tmpl = atol(value);
 			if(tmpl < 0 || tmpl > UINT32_MAX){

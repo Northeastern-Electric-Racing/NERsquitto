@@ -140,6 +140,13 @@ static int property__read(struct mosquitto__packet *packet, uint32_t *len, mosqu
 			property->value.s.len = slen2;
 			break;
 
+		case MQTT_PROP_TIMESTAMP:
+			rc = packet__read_uint64(packet, &uint64);
+			if(rc) return rc;
+			*len -= 8; /* uint64 */
+			property->value.i64 = uint64;
+			break;
+
 		default:
 #ifdef WITH_BROKER
 			log__printf(NULL, MOSQ_LOG_DEBUG, "Unsupported property type: %d", property_identifier);
@@ -238,6 +245,7 @@ void property__free(mosquitto_property **property)
 		case MQTT_PROP_WILDCARD_SUB_AVAILABLE:
 		case MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE:
 		case MQTT_PROP_SHARED_SUB_AVAILABLE:
+		case MQTT_PROP_TIMESTAMP:
 			/* Nothing to free */
 			break;
 	}
@@ -292,6 +300,10 @@ unsigned int property__get_length(const mosquitto_property *property)
 		case MQTT_PROP_MAXIMUM_PACKET_SIZE:
 		case MQTT_PROP_SESSION_EXPIRY_INTERVAL:
 			return 5; /* 1 (identifier) + 4 bytes */
+		
+		/* uint64 */
+		case MQTT_PROP_TIMESTAMP:
+			return 9; /* 1 (identifier) + 8 bytes */
 
 		/* varint */
 		case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
@@ -390,6 +402,10 @@ static int property__write(struct mosquitto__packet *packet, const mosquitto_pro
 		case MQTT_PROP_WILL_DELAY_INTERVAL:
 		case MQTT_PROP_MAXIMUM_PACKET_SIZE:
 			packet__write_uint32(packet, property->value.i32);
+			break;
+
+		case MQTT_PROP_TIMESTAMP:
+			packet__write_uint64(packet, property->value.i64);
 			break;
 
 		case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
@@ -527,6 +543,7 @@ int mosquitto_property_check_command(int command, int identifier)
 			break;
 
 		case MQTT_PROP_TOPIC_ALIAS:
+		case MQTT_PROP_TIMESTAMP:
 			if(command != CMD_PUBLISH){
 				return MOSQ_ERR_PROTOCOL;
 			}
@@ -599,6 +616,8 @@ const char *mosquitto_property_identifier_to_string(int identifier)
 			return "subscription-identifier-available";
 		case MQTT_PROP_SHARED_SUB_AVAILABLE:
 			return "shared-subscription-available";
+		case MQTT_PROP_TIMESTAMP:
+			return "timestamp";
 		default:
 			return NULL;
 	}
@@ -690,6 +709,9 @@ int mosquitto_string_to_property_info(const char *propname, int *identifier, int
 	}else if(!strcasecmp(propname, "shared-subscription-available")){
 		*identifier = MQTT_PROP_SHARED_SUB_AVAILABLE;
 		*type = MQTT_PROP_TYPE_BYTE;
+	}else if(!strcasecmp(propname, "timestamp")){
+		*identifier = MQTT_PROP_TIMESTAMP;
+		*type = MQTT_PROP_TYPE_INT64;
 	}else{
 		return MOSQ_ERR_INVAL;
 	}
@@ -785,6 +807,27 @@ int mosquitto_property_add_int32(mosquitto_property **proplist, int identifier, 
 	prop->client_generated = true;
 	prop->identifier = identifier;
 	prop->value.i32 = value;
+
+	property__add(proplist, prop);
+	return MOSQ_ERR_SUCCESS;
+}
+
+int mosquitto_property_add_int64(mosquitto_property **proplist, int identifier, uint32_t value)
+{
+	mosquitto_property *prop;
+
+	if(!proplist) return MOSQ_ERR_INVAL;
+	if(identifier != MQTT_PROP_TIMESTAMP){
+
+		return MOSQ_ERR_INVAL;
+	}
+
+	prop = mosquitto__calloc(1, sizeof(mosquitto_property));
+	if(!prop) return MOSQ_ERR_NOMEM;
+
+	prop->client_generated = true;
+	prop->identifier = identifier;
+	prop->value.i64 = value;
 
 	property__add(proplist, prop);
 	return MOSQ_ERR_SUCCESS;
@@ -1083,6 +1126,24 @@ const mosquitto_property *mosquitto_property_read_int32(const mosquitto_property
 }
 
 
+const mosquitto_property *mosquitto_property_read_int64(const mosquitto_property *proplist, int identifier, uint64_t *value, bool skip_first)
+{
+	const mosquitto_property *p;
+	if(!proplist) return NULL;
+
+	p = property__get_property(proplist, identifier, skip_first);
+	if(!p) return NULL;
+	if(p->identifier != MQTT_PROP_TIMESTAMP) {
+
+		return NULL;
+	}
+
+	if(value) *value = p->value.i64;
+
+	return p;
+}
+
+
 const mosquitto_property *mosquitto_property_read_varint(const mosquitto_property *proplist, int identifier, uint32_t *value, bool skip_first)
 {
 	const mosquitto_property *p;
@@ -1237,6 +1298,10 @@ int mosquitto_property_copy_all(mosquitto_property **dest, const mosquitto_prope
 			case MQTT_PROP_SESSION_EXPIRY_INTERVAL:
 			case MQTT_PROP_WILL_DELAY_INTERVAL:
 			case MQTT_PROP_MAXIMUM_PACKET_SIZE:
+				pnew->value.i32 = src->value.i32;
+				break;
+
+			case MQTT_PROP_TIMESTAMP:
 				pnew->value.i32 = src->value.i32;
 				break;
 

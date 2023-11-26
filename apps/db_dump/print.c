@@ -132,6 +132,10 @@ static void print__properties(mosquitto_property *properties)
 			case MQTT_PROP_USER_PROPERTY:
 				printf("\t\tUser property: %s , %s\n", properties->name.v, properties->value.s.v);
 				break;
+			
+			case MQTT_PROP_TIMESTAMP:
+				printf("\t\tUnix Timestamp: %ld\n", properties->value.s.v);
+				break;
 
 			default:
 				printf("\t\tInvalid property type: %d\n", properties->identifier);

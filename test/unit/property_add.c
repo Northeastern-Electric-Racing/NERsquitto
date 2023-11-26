@@ -79,6 +79,16 @@ static void bad_add_string_pair_helper(int identifier)
 	CU_ASSERT_PTR_NULL(proplist);
 }
 
+static void bad_add_int64_helper(int identifier)
+{
+	mosquitto_property *proplist = NULL;
+	int rc;
+
+	rc = mosquitto_property_add_int64(&proplist, identifier, 1);
+	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
+	CU_ASSERT_PTR_NULL(proplist);
+}
+
 static void TEST_add_bad_byte(void)
 {
 	bad_add_byte_helper(MQTT_PROP_MESSAGE_EXPIRY_INTERVAL);
@@ -100,6 +110,7 @@ static void TEST_add_bad_byte(void)
 	bad_add_byte_helper(MQTT_PROP_TOPIC_ALIAS);
 	bad_add_byte_helper(MQTT_PROP_USER_PROPERTY);
 	bad_add_byte_helper(MQTT_PROP_MAXIMUM_PACKET_SIZE);
+	bad_add_byte_helper(MQTT_PROP_TIMESTAMP);
 }
 
 static void TEST_add_bad_int16(void)
@@ -127,6 +138,7 @@ static void TEST_add_bad_int16(void)
 	bad_add_int16_helper(MQTT_PROP_WILDCARD_SUB_AVAILABLE);
 	bad_add_int16_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_int16_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
+	bad_add_int16_helper(MQTT_PROP_TIMESTAMP);
 }
 
 static void TEST_add_bad_int32(void)
@@ -154,6 +166,7 @@ static void TEST_add_bad_int32(void)
 	bad_add_int32_helper(MQTT_PROP_WILDCARD_SUB_AVAILABLE);
 	bad_add_int32_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_int32_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
+	bad_add_int32_helper(MQTT_PROP_TIMESTAMP);
 }
 
 static void TEST_add_bad_varint(void)
@@ -184,6 +197,7 @@ static void TEST_add_bad_varint(void)
 	bad_add_varint_helper(MQTT_PROP_WILDCARD_SUB_AVAILABLE);
 	bad_add_varint_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_varint_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
+	bad_add_varint_helper(MQTT_PROP_TIMESTAMP);
 }
 
 static void TEST_add_bad_binary(void)
@@ -213,6 +227,7 @@ static void TEST_add_bad_binary(void)
 	bad_add_binary_helper(MQTT_PROP_WILDCARD_SUB_AVAILABLE);
 	bad_add_binary_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_binary_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
+	bad_add_binary_helper(MQTT_PROP_TIMESTAMP);
 }
 
 static void TEST_add_bad_string(void)
@@ -237,6 +252,7 @@ static void TEST_add_bad_string(void)
 	bad_add_string_helper(MQTT_PROP_WILDCARD_SUB_AVAILABLE);
 	bad_add_string_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_string_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
+	bad_add_string_helper(MQTT_PROP_TIMESTAMP);
 }
 
 static void TEST_add_bad_string_pair(void)
@@ -267,6 +283,38 @@ static void TEST_add_bad_string_pair(void)
 	bad_add_string_pair_helper(MQTT_PROP_WILDCARD_SUB_AVAILABLE);
 	bad_add_string_pair_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_string_pair_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
+	bad_add_string_pair_helper(MQTT_PROP_TIMESTAMP);
+}
+
+static void TEST_add_bad_int64_pair(void)
+{
+	bad_add_int64_helper(MQTT_PROP_PAYLOAD_FORMAT_INDICATOR);
+	bad_add_int64_helper(MQTT_PROP_MESSAGE_EXPIRY_INTERVAL);
+	bad_add_int64_helper(MQTT_PROP_CONTENT_TYPE);
+	bad_add_int64_helper(MQTT_PROP_RESPONSE_TOPIC);
+	bad_add_int64_helper(MQTT_PROP_CORRELATION_DATA);
+	bad_add_int64_helper(MQTT_PROP_SUBSCRIPTION_IDENTIFIER);
+	bad_add_int64_helper(MQTT_PROP_SESSION_EXPIRY_INTERVAL);
+	bad_add_int64_helper(MQTT_PROP_ASSIGNED_CLIENT_IDENTIFIER);
+	bad_add_int64_helper(MQTT_PROP_SERVER_KEEP_ALIVE);
+	bad_add_int64_helper(MQTT_PROP_AUTHENTICATION_METHOD);
+	bad_add_int64_helper(MQTT_PROP_AUTHENTICATION_DATA);
+	bad_add_int64_helper(MQTT_PROP_REQUEST_PROBLEM_INFORMATION);
+	bad_add_int64_helper(MQTT_PROP_WILL_DELAY_INTERVAL);
+	bad_add_int64_helper(MQTT_PROP_REQUEST_RESPONSE_INFORMATION);
+	bad_add_int64_helper(MQTT_PROP_RESPONSE_INFORMATION);
+	bad_add_int64_helper(MQTT_PROP_SERVER_REFERENCE);
+	bad_add_int64_helper(MQTT_PROP_REASON_STRING);
+	bad_add_int64_helper(MQTT_PROP_RECEIVE_MAXIMUM);
+	bad_add_int64_helper(MQTT_PROP_TOPIC_ALIAS_MAXIMUM);
+	bad_add_int64_helper(MQTT_PROP_TOPIC_ALIAS);
+	bad_add_int64_helper(MQTT_PROP_MAXIMUM_QOS);
+	bad_add_int64_helper(MQTT_PROP_RETAIN_AVAILABLE);
+	bad_add_int64_helper(MQTT_PROP_MAXIMUM_PACKET_SIZE);
+	bad_add_int64_helper(MQTT_PROP_WILDCARD_SUB_AVAILABLE);
+	bad_add_int64_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
+	bad_add_int64_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
+	bad_add_int64_helper(MQTT_PROP_USER_PROPERTY);
 }
 
 /* ========================================================================
@@ -397,6 +445,23 @@ static void single_add_string_pair_helper(int identifier)
 	}
 }
 
+static void single_add_int64_helper(int identifier)
+{
+	mosquitto_property *proplist = NULL;
+	int rc;
+
+	rc = mosquitto_property_add_int64(&proplist, identifier, 799969939335432);
+	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
+	CU_ASSERT_PTR_NOT_NULL(proplist);
+	if(proplist){
+		CU_ASSERT_EQUAL(proplist->identifier, identifier);
+		CU_ASSERT_EQUAL(proplist->value.i64, 799969939335432);
+		CU_ASSERT_PTR_NULL(proplist->next);
+
+		mosquitto_property_free_all(&proplist);
+	}
+}
+
 static void TEST_add_single_byte(void)
 {
 	single_add_byte_helper(MQTT_PROP_PAYLOAD_FORMAT_INDICATOR);
@@ -450,6 +515,11 @@ static void TEST_add_single_string(void)
 static void TEST_add_single_string_pair(void)
 {
 	single_add_string_pair_helper(MQTT_PROP_USER_PROPERTY);
+}
+
+static void TEST_add_single_int64(void)
+{
+	single_add_int64_helper(MQTT_PROP_TIMESTAMP);
 }
 
 /* ========================================================================

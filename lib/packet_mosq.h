@@ -35,6 +35,7 @@ int packet__read_binary(struct mosquitto__packet *packet, uint8_t **data, uint16
 int packet__read_string(struct mosquitto__packet *packet, char **str, uint16_t *length);
 int packet__read_uint16(struct mosquitto__packet *packet, uint16_t *word);
 int packet__read_uint32(struct mosquitto__packet *packet, uint32_t *word);
+int packet__read_uint64(struct mosquitto__packet *packet, uint64_t *word);
 int packet__read_varint(struct mosquitto__packet *packet, uint32_t *word, uint8_t *bytes);
 
 void packet__write_byte(struct mosquitto__packet *packet, uint8_t byte);
@@ -42,6 +43,7 @@ void packet__write_bytes(struct mosquitto__packet *packet, const void *bytes, ui
 void packet__write_string(struct mosquitto__packet *packet, const char *str, uint16_t length);
 void packet__write_uint16(struct mosquitto__packet *packet, uint16_t word);
 void packet__write_uint32(struct mosquitto__packet *packet, uint32_t word);
+void packet__write_uint64(struct mosquitto__packet *packet, uint64_t word);
 int packet__write_varint(struct mosquitto__packet *packet, uint32_t word);
 
 unsigned int packet__varint_bytes(uint32_t word);

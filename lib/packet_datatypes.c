@@ -201,6 +201,38 @@ void packet__write_uint32(struct mosquitto__packet *packet, uint32_t word)
 }
 
 
+int packet__read_uint64(struct mosquitto__packet *packet, uint64_t *word)
+{
+	uint64_t val = 0;
+	int i;
+
+	assert(packet);
+	if(packet->pos+8 > packet->remaining_length) return MOSQ_ERR_MALFORMED_PACKET;
+
+	for(i=0; i<8; i++){
+		val = (val << 8) + packet->payload[packet->pos];
+		packet->pos++;
+	}
+
+	*word = val;
+
+	return MOSQ_ERR_SUCCESS;
+}
+
+
+void packet__write_uint64(struct mosquitto__packet *packet, uint64_t word)
+{
+	packet__write_byte(packet, (uint8_t)((word & 0xFF00000000000000) >> 56));
+	packet__write_byte(packet, (uint8_t)((word & 0x00FF000000000000) >> 48));
+	packet__write_byte(packet, (uint8_t)((word & 0x0000FF0000000000) >> 40));
+	packet__write_byte(packet, (uint8_t)((word & 0x000000FF00000000) >> 32));
+	packet__write_byte(packet, (uint8_t)((word & 0x00000000FF000000) >> 24));
+	packet__write_byte(packet, (uint8_t)((word & 0x0000000000FF0000) >> 16));
+	packet__write_byte(packet, (uint8_t)((word & 0x000000000000FF00) >> 8));
+	packet__write_byte(packet, (uint8_t)((word & 0x00000000000000FF)));
+}
+
+
 int packet__read_varint(struct mosquitto__packet *packet, uint32_t *word, uint8_t *bytes)
 {
 	int i;
