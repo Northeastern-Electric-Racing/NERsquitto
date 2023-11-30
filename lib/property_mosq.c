@@ -813,7 +813,7 @@ int mosquitto_property_add_int32(mosquitto_property **proplist, int identifier, 
 	return MOSQ_ERR_SUCCESS;
 }
 
-int mosquitto_property_add_int64(mosquitto_property **proplist, int identifier, uint32_t value)
+int mosquitto_property_add_int64(mosquitto_property **proplist, int identifier, uint64_t value)
 {
 	mosquitto_property *prop;
 
