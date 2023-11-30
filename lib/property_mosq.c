@@ -41,6 +41,7 @@ static int property__read(struct mosquitto__packet *packet, uint32_t *len, mosqu
 	uint8_t byte_count;
 	uint16_t uint16;
 	uint32_t uint32;
+	uint64_t uint64;
 	uint32_t varint;
 	char *str1, *str2;
 	uint16_t slen1, slen2;
