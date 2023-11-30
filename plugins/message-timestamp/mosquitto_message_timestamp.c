@@ -49,7 +49,11 @@ static int callback_message(int event, void *event_data, void *userdata)
 	UNUSED(userdata);
 
 	clock_gettime(CLOCK_REALTIME, &ts);
-	long ti = round(ts.tv_nsec / 1.0e6);
+	long ti = (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
+
+	if (ts.tv_nsec % 1000000 >= 500000) {
+		ti++;
+	}
 
 	return mosquitto_property_add_int64(&ed->properties, MQTT_PROP_TIMESTAMP, ti);
 }
