@@ -233,7 +233,7 @@ enum mqtt5_property {
 	MQTT_PROP_WILDCARD_SUB_AVAILABLE = 40,		/* Byte :				CONNACK */
 	MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE = 41,	/* Byte :				CONNACK */
 	MQTT_PROP_SHARED_SUB_AVAILABLE = 42,		/* Byte :				CONNACK */
-	MQTT_PROP_TIMESTAMP = 69,					/* 8 byte int :         PUBLISH */
+	MQTT_PROP_TIMESTAMP = 26,					/* 8 byte int :         PUBLISH */
 };
 
 enum mqtt5_property_type {
